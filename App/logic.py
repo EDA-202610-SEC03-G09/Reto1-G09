@@ -1,24 +1,130 @@
 import time
+import csv
+import os
+from DataStructures.List import array_list as lt
+
+csv.field_size_limit(2147483647)
+data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "Data")
 
 def new_logic():
     """
     Crea el catalogo para almacenar las estructuras de datos
     """
-    #TODO: Llama a las funciónes de creación de las estructuras de datos
-    pass
-
-
-# Funciones para la carga de datos
+    catalog = {
+        "computadores": lt.new_list()
+    }
+    return catalog
 
 def load_data(catalog, filename):
-    """
-    Carga los datos del reto
-    """
-    # TODO: Realizar la carga de datos
-    pass
 
-# Funciones de consulta sobre el catálogo
+    start_time = get_time()
 
+    load_computadores(catalog, filename)
+
+    total = catalog["computadores"]["size"]
+
+    def comp_menor_precio(catalog):
+        precio_menor = None
+        indice = None
+
+        for x in range(0, catalog["computadores"]["size"]):
+            comp = catalog["computadores"]["elements"][x]
+            if comp["price"] != "":
+                precio = float(comp["price"])
+                if (precio_menor is None) or (precio < precio_menor):
+                    precio_menor = precio
+                    indice = x
+
+        if indice is None:
+            return None
+
+        c = catalog["computadores"]["elements"][indice]
+        return (c["device_type"], c["brand"], c["model"], c["release_year"], c["os"])
+
+    def comp_mayor_precio(catalog):
+        precio_mayor = None
+        indice = None
+
+        for x in range(0, catalog["computadores"]["size"]):
+            comp = catalog["computadores"]["elements"][x]
+            if comp["price"] != "":
+                precio = float(comp["price"])
+                if (precio_mayor is None) or (precio > precio_mayor):
+                    precio_mayor = precio
+                    indice = x
+
+        if indice is None:
+            return None
+
+        c = catalog["computadores"]["elements"][indice]
+        return (c["device_type"], c["brand"], c["model"], c["release_year"], c["os"])
+
+    menor = comp_menor_precio(catalog)
+    mayor = comp_mayor_precio(catalog)
+
+    def primeras_5(catalog):
+        resultados = []
+        n = catalog["computadores"]["size"]
+        limite = 5 if n >= 5 else n
+
+        for i in range(limite):
+            comp = catalog["computadores"]["elements"][i]
+            resultados.append([
+                comp["model"],
+                comp["brand"],
+                comp["release_year"],
+                comp["cpu_model"],
+                comp["gpu_model"],
+                comp["price"]
+            ])
+        return resultados
+
+    def ultimas_5(catalog):
+        resultados = []
+        n = catalog["computadores"]["size"]
+        inicio = n - 5
+        if inicio < 0:
+            inicio = 0
+
+        for i in range(inicio, n):
+            comp = catalog["computadores"]["elements"][i]
+            resultados.append([
+                comp["model"],
+                comp["brand"],
+                comp["release_year"],
+                comp["cpu_model"],
+                comp["gpu_model"],
+                comp["price"]
+            ])
+        return resultados
+
+    primeros_tabla = primeras_5(catalog)
+    ultimos_tabla = ultimas_5(catalog)
+
+    end_time = get_time()
+    d_time = delta_time(start_time, end_time)
+
+    return total, d_time, menor, mayor, primeros_tabla, ultimos_tabla
+
+
+def load_computadores(catalog, filename):
+    file = os.path.join(data_dir, filename)
+    input_file = csv.DictReader(open(file, encoding='utf-8'))
+    for comp in input_file:
+        lt.add_last(catalog["computadores"], comp)
+    return lt.size(catalog["computadores"])
+
+
+# -----------------------------------------------------
+# Funciones para medir tiempos de ejecucion
+# -----------------------------------------------------
+
+def get_time():
+    return float(time.perf_counter() * 1000)
+
+
+def delta_time(start, end):
+    return float(end - start)
 
 def req_1(catalog):
     """

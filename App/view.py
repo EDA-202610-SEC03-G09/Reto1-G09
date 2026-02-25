@@ -1,5 +1,6 @@
 import sys
-
+import App.logic as logic
+from tabulate import tabulate
 
 def new_logic():
     """
@@ -20,19 +21,46 @@ def print_menu():
     print("7- Salir")
 
 def load_data(control):
-    """
-    Carga los datos
-    """
-    #TODO: Realizar la carga de datos
-    pass
+    archivo = input("Nombre del archivo (ej: computers-small.csv): ").strip()
 
+    total, tiempo, menor, mayor, primeros, ultimos = logic.load_data(control, archivo)
+
+    print("\nTiempo de carga (ms):", round(tiempo, 3))
+    print("Total computadores cargados:", total)
+
+    print("\nComputador con MENOR precio:")
+    if menor is None:
+        print("No hay computadores con precio válido.")
+    else:
+        tipo, marca, modelo, anio, so = menor
+        print("Tipo:", tipo, "| Marca:", marca, "| Modelo:", modelo, "| Año:", anio, "| OS:", so)
+
+    print("\nComputador con MAYOR precio:")
+    if mayor is None:
+        print("No hay computadores con precio válido.")
+    else:
+        tipo, marca, modelo, anio, so = mayor
+        print("Tipo:", tipo, "| Marca:", marca, "| Modelo:", modelo, "| Año:", anio, "| OS:", so)
+
+    print("\nPrimeros 5 computadores (model, brand, year, cpu, gpu, price):")
+    for fila in primeros:
+        print(fila)
+
+    print("\nÚltimos 5 computadores (model, brand, year, cpu, gpu, price):")
+    for fila in ultimos:
+        print(fila)
+
+    return control
 
 def print_data(control, id):
-    """
-        Función que imprime un dato dado su ID
-    """
-    #TODO: Realizar la función para imprimir un elemento
-    pass
+    n = control["computadores"]["size"]
+    if id < 0 or id >= n:
+        print("ID fuera de rango. Rango válido: 0 a", n - 1)
+        return
+
+    comp = control["computadores"]["elements"][id]
+    print("\nComputador en posición", id, ":")
+    print(comp)
 
 def print_req_1(control):
     """
