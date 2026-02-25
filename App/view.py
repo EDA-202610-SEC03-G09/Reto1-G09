@@ -68,6 +68,7 @@ def print_req_1(control):
     """
     # TODO: Imprimir el resultado del requerimiento 1
     pass
+    
 
 
 def print_req_2(control):
