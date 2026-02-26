@@ -147,20 +147,70 @@ def print_req_1(control):
 
 
 def print_req_2(control):
-    """
-        Función que imprime la solución del Requerimiento 2 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 2
-    pass
+    if "computadores" not in control:
+        print("No hay catálogo cargado correctamente (faltan 'computadores').")
+        return
 
+    if control["computadores"] is None:
+        print("No hay datos cargados. Primero carga un archivo.")
+        return
+
+    texto_min = input("Precio mínimo: ").strip()
+    texto_max = input("Precio máximo: ").strip()
+
+    if texto_min == "" or texto_max == "":
+        print("Debes ingresar ambos precios.")
+        return
+
+    if not texto_min.replace(".", "", 1).isdigit() or not texto_max.replace(".", "", 1).isdigit():
+        print("Los precios deben ser numéricos.")
+        return
+
+    precio_min = float(texto_min)
+    precio_max = float(texto_max)
+
+    if precio_min > precio_max:
+        print("El precio mínimo no puede ser mayor que el máximo.")
+        return
+
+    tiempo, cantidad, prom_ram, prom_vram, prom_precio, moderno, barato, caro, filtrados = logic.req_2(control, precio_min, precio_max)
+
+    print("\nRESULTADO REQ 2")
+    print("Tiempo (ms):", round(tiempo, 3))
+    print("Cantidad de computadores en rango:", cantidad)
+
+    if cantidad == 0:
+        print("No hay computadores en ese rango.")
+        return
+
+    print("\nPromedio RAM:", round(prom_ram, 2) if prom_ram is not None else "N/A")
+    print("Promedio VRAM:", round(prom_vram, 2) if prom_vram is not None else "N/A")
+    print("Promedio Precio:", round(prom_precio, 2) if prom_precio is not None else "N/A")
+
+    print("\nComputador más moderno:")
+    print(moderno if moderno is not None else "N/A")
+
+    print("\nComputador más barato:")
+    print(barato if barato is not None else "N/A")
+
+    print("\nComputador más caro:")
+    print(caro if caro is not None else "N/A")
 
 def print_req_3(control):
-    """
-        Función que imprime la solución del Requerimiento 3 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 3
-    pass
+    print("\n================ REQUERIMIENTO 3 ================")
 
+    cpu_brand = input("Ingrese la marca del CPU (ej: Intel, AMD): ")
+    cpu_tier = input("Ingrese el CPU tier: ")
+
+    resultado = logic.req_3(control, cpu_brand, cpu_tier)
+
+    if resultado and resultado[0][0] == "Mensaje":
+        print("\n", resultado[0][1])
+        return
+
+    print("\n")
+    print(tabulate(resultado, headers=["Concepto", "Valor"], tablefmt="grid"))
+    print("=================================================\n")
 
 def print_req_4(control):
     
