@@ -147,18 +147,46 @@ def print_req_1(control):
 
 
 def print_req_2(control):
-    """
-        Función que imprime la solución del Requerimiento 2 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 2
-    pass
+    if control["computadores"] is None:
+        print("Primero carga los datos.")
+        return
 
+    texto_min = input("Precio mínimo: ").strip()
+    texto_max = input("Precio máximo: ").strip()
 
+    if not texto_min.replace(".", "", 1).isdigit() or not texto_max.replace(".", "", 1).isdigit():
+        print("Precios inválidos.")
+        return
+
+    precio_min = float(texto_min)
+    precio_max = float(texto_max)
+
+    tiempo, total, prom_ram, prom_vram, prom_precio, moderno, barato, caro, filtrados = logic.req_2(control, precio_min, precio_max)
+
+    print("\n--- RESULTADO REQ 2 ---")
+    print("Tiempo (ms):", round(tiempo, 3))
+    print("Total encontrados:", total)
+
+    if total == 0:
+        print("No hay coincidencias en ese rango.")
+        return
+
+    print("\nPromedios:")
+    print("RAM:", round(prom_ram, 2) if prom_ram is not None else "N/A")
+    print("VRAM:", round(prom_vram, 2) if prom_vram is not None else "N/A")
+    print("Precio:", round(prom_precio, 2) if prom_precio is not None else "N/A")
+
+    print("\nMás moderno:")
+    print(moderno)
+
+    print("\nMás barato:")
+    print(barato)
+
+    print("\nMás caro:")
+    print(caro)
+    
 def print_req_3(control):
-    """
-        Función que imprime la solución del Requerimiento 3 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 3
+    
     pass
 
 
@@ -226,11 +254,64 @@ def print_req_5(control):
 
 
 def print_req_6(control):
-    """
-        Función que imprime la solución del Requerimiento 6 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 6
-    pass
+    if "computadores" not in control or control["computadores"] is None:
+        print("Primero debes cargar los datos.")
+        return
+
+    if lt.size(control["computadores"]) == 0:
+        print("Primero debes cargar los datos.")
+        return
+
+    t1 = input("Año inicial: ").strip()
+    t2 = input("Año final: ").strip()
+
+    if t1 == "" or t2 == "":
+        print("Debes ingresar ambos años.")
+        return
+
+    if not t1.isdigit() or not t2.isdigit():
+        print("Los años deben ser enteros.")
+        return
+
+    anio_inicial = int(t1)
+    anio_final = int(t2)
+
+    if anio_inicial > anio_final:
+        print("El año inicial no puede ser mayor que el año final.")
+        return
+
+    tiempo, total, mas_usado, mas_recauda, detalles = logic.req_6(control, anio_inicial, anio_final)
+
+    print("\nRESULTADO REQ 6")
+    print("Tiempo (ms):", round(tiempo, 3))
+    print("Total computadores en rango:", total)
+
+    if total == 0:
+        print("No hay computadores en ese rango de años.")
+        return
+
+    print("\nOS más usado:")
+    if mas_usado is None:
+        print("N/A")
+    else:
+        print("OS:", mas_usado["os"], "| Registros:", mas_usado["cantidad"], "| Recaudo:", round(mas_usado["recaudo"], 2))
+
+    print("\nOS que más recauda:")
+    if mas_recauda is None:
+        print("N/A")
+    else:
+        print("OS:", mas_recauda["os"], "| Registros:", mas_recauda["cantidad"], "| Recaudo:", round(mas_recauda["recaudo"], 2))
+
+    print("\nDetalle por cada OS:")
+    for i in range(lt.size(detalles)):
+        d = lt.get_element(detalles, i)
+        print("\nOS:", d["os"])
+        print("Registros:", d["cantidad"], "| Recaudo:", round(d["recaudo"], 2))
+        print("Precio promedio:", round(d["precio_promedio"], 2), "| Peso promedio:", round(d["peso_promedio"], 2))
+        print("Más caro:", d["mas_caro"])
+        print("Más barato:", d["mas_barato"])
+
+
 
 # Se crea la lógica asociado a la vista
 control = new_logic()
