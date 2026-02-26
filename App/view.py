@@ -1,6 +1,9 @@
 import sys
+import os
 import App.logic as logic
 from tabulate import tabulate
+from DataStructures.List import array_list as lt
+
 
 def new_logic():
     """
@@ -21,11 +24,27 @@ def print_menu():
     print("7- Salir")
 
 def load_data(control):
-    archivo = input("Nombre del archivo (ej: computers-small.csv): ").strip()
+    """
+    Pide el nombre del archivo, verifica que exista y carga datos.
+    """
+    archivo = input("Nombre del archivo: ").strip()
+
+    if archivo == "":
+        print("No ingresaste un nombre de archivo.")
+        return control
+
+    data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "Data")
+    ruta = os.path.join(data_dir, archivo)
+
+    if not os.path.isfile(ruta):
+        print("No se encontró el archivo:", archivo)
+        print("Revisa que esté en la carpeta Data/ y que el nombre esté bien escrito.")
+        return control
 
     total, tiempo, menor, mayor, primeros, ultimos = logic.load_data(control, archivo)
 
-    print("\nTiempo de carga (ms):", round(tiempo, 3))
+    print("\n CARGA COMPLETADA")
+    print("Tiempo de carga (ms):", round(tiempo, 3))
     print("Total computadores cargados:", total)
 
     print("\nComputador con MENOR precio:")
@@ -52,14 +71,35 @@ def load_data(control):
 
     return control
 
-def print_data(control, id):
-    n = control["computadores"]["size"]
-    if id < 0 or id >= n:
+
+def print_data(control):
+    """
+    Imprime un computador por posición (ID) de forma segura.
+    """
+    n = lt.size(control["computadores"])
+
+    if n == 0:
+        print("No hay datos cargados. Primero carga un archivo.")
+        return
+
+    texto = input(f"ID del computador (0 a {n-1}): ").strip()
+
+    if texto == "":
+        print("No ingresaste un ID.")
+        return
+
+    if not texto.isdigit():
+        print("El ID debe ser un número entero.")
+        return
+
+    pos = int(texto)
+
+    if pos < 0 or pos >= n:
         print("ID fuera de rango. Rango válido: 0 a", n - 1)
         return
 
-    comp = control["computadores"]["elements"][id]
-    print("\nComputador en posición", id, ":")
+    comp = lt.get_element(control["computadores"], pos) 
+    print("\nComputador en posición", pos, ":")
     print(comp)
 
 def print_req_1(control):

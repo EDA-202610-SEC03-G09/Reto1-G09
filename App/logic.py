@@ -8,116 +8,95 @@ data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "Data"
 
 def new_logic():
     """
-    Crea el catalogo para almacenar las estructuras de datos
+    Crea el catálogo del reto.
     """
-    catalog = {
-        "computadores": lt.new_list()
-    }
-    return catalog
+    return {"computadores": lt.new_list()}
+
 
 def load_data(catalog, filename):
-
+    """
+    Carga el CSV una sola vez y retorna lo pedido en la Parte 2:
+    total, tiempo, menor, mayor, primeros 5, últimos 5
+    """
     start_time = get_time()
 
-    load_computadores(catalog, filename)
+    file_path = os.path.join(data_dir, filename)
 
-    total = catalog["computadores"]["size"]
+    total = 0
+    menor_precio = None
+    mayor_precio = None
+    comp_menor = None
+    comp_mayor = None
 
-    def comp_menor_precio(catalog):
-        precio_menor = None
-        indice = None
+    primeros_5 = []
+    ultimos_5 = lt.new_list()  
 
-        for x in range(0, catalog["computadores"]["size"]):
-            comp = catalog["computadores"]["elements"][x]
-            if comp["price"] != "":
-                precio = float(comp["price"])
-                if (precio_menor is None) or (precio < precio_menor):
-                    precio_menor = precio
-                    indice = x
+    with open(file_path, encoding="utf-8", newline="") as csvfile:
+        reader = csv.DictReader(csvfile)
 
-        if indice is None:
-            return None
+        for comp in reader:
+            # Guardar el registro en la lista principal
+            lt.add_last(catalog["computadores"], comp)
+            total += 1
 
-        c = catalog["computadores"]["elements"][indice]
-        return (c["device_type"], c["brand"], c["model"], c["release_year"], c["os"])
+            fila = [
+                comp.get("model"),
+                comp.get("brand"),
+                comp.get("release_year"),
+                comp.get("cpu_model"),
+                comp.get("gpu_model"),
+                comp.get("price")
+            ]
 
-    def comp_mayor_precio(catalog):
-        precio_mayor = None
-        indice = None
+            if total <= 5:
+                primeros_5.append(fila)
 
-        for x in range(0, catalog["computadores"]["size"]):
-            comp = catalog["computadores"]["elements"][x]
-            if comp["price"] != "":
-                precio = float(comp["price"])
-                if (precio_mayor is None) or (precio > precio_mayor):
-                    precio_mayor = precio
-                    indice = x
+            lt.add_last(ultimos_5, fila)
+            if lt.size(ultimos_5) > 5:
+                lt.remove_first(ultimos_5)
 
-        if indice is None:
-            return None
+            texto_precio = comp.get("price", "")
+            texto_precio = texto_precio.strip() if texto_precio is not None else ""
+            if texto_precio != "":
+                precio = float(texto_precio)
 
-        c = catalog["computadores"]["elements"][indice]
-        return (c["device_type"], c["brand"], c["model"], c["release_year"], c["os"])
+                if (menor_precio is None) or (precio < menor_precio):
+                    menor_precio = precio
+                    comp_menor = comp
 
-    menor = comp_menor_precio(catalog)
-    mayor = comp_mayor_precio(catalog)
+                if (mayor_precio is None) or (precio > mayor_precio):
+                    mayor_precio = precio
+                    comp_mayor = comp
 
-    def primeras_5(catalog):
-        resultados = []
-        n = catalog["computadores"]["size"]
-        limite = 5 if n >= 5 else n
+    ultimos_5_tabla = []
+    for i in range(0, lt.size(ultimos_5)):   
+        ultimos_5_tabla.append(lt.get_element(ultimos_5, i))
 
-        for i in range(limite):
-            comp = catalog["computadores"]["elements"][i]
-            resultados.append([
-                comp["model"],
-                comp["brand"],
-                comp["release_year"],
-                comp["cpu_model"],
-                comp["gpu_model"],
-                comp["price"]
-            ])
-        return resultados
+    menor = None
+    mayor = None
 
-    def ultimas_5(catalog):
-        resultados = []
-        n = catalog["computadores"]["size"]
-        inicio = n - 5
-        if inicio < 0:
-            inicio = 0
+    if comp_menor is not None:
+        menor = (
+            comp_menor.get("device_type"),
+            comp_menor.get("brand"),
+            comp_menor.get("model"),
+            comp_menor.get("release_year"),
+            comp_menor.get("os")
+        )
 
-        for i in range(inicio, n):
-            comp = catalog["computadores"]["elements"][i]
-            resultados.append([
-                comp["model"],
-                comp["brand"],
-                comp["release_year"],
-                comp["cpu_model"],
-                comp["gpu_model"],
-                comp["price"]
-            ])
-        return resultados
-
-    primeros_tabla = primeras_5(catalog)
-    ultimos_tabla = ultimas_5(catalog)
+    if comp_mayor is not None:
+        mayor = (
+            comp_mayor.get("device_type"),
+            comp_mayor.get("brand"),
+            comp_mayor.get("model"),
+            comp_mayor.get("release_year"),
+            comp_mayor.get("os")
+        )
 
     end_time = get_time()
-    d_time = delta_time(start_time, end_time)
+    tiempo = delta_time(start_time, end_time)
 
-    return total, d_time, menor, mayor, primeros_tabla, ultimos_tabla
-
-
-def load_computadores(catalog, filename):
-    file = os.path.join(data_dir, filename)
-    input_file = csv.DictReader(open(file, encoding='utf-8'))
-    for comp in input_file:
-        lt.add_last(catalog["computadores"], comp)
-    return lt.size(catalog["computadores"])
-
-
-# -----------------------------------------------------
-# Funciones para medir tiempos de ejecucion
-# -----------------------------------------------------
+    return total, tiempo, menor, mayor, primeros_5, ultimos_5_tabla
 
 def get_time():
     return float(time.perf_counter() * 1000)
