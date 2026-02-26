@@ -2,6 +2,7 @@ import time
 import csv
 import os
 from DataStructures.List import array_list as lt
+from DataStructures.List import single_linked_list as sl
 
 csv.field_size_limit(2147483647)
 data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "Data")
@@ -390,7 +391,7 @@ def req_5(catalog,filtro,resolucion,año_min, año_max):
     computadores = catalog["computadores"]
     largo = lt.size(computadores)
     
-    if filtro == "mayor":
+    if filtro == "caro":
         for i in range (largo):
             comp = lt.get_element(computadores,i)
             if comp["display_resolution"] == resolucion and comp["release_year"] != "" and año_min <= float(comp["release_year"]) <= año_max:
@@ -419,7 +420,7 @@ def req_5(catalog,filtro,resolucion,año_min, año_max):
                 if comp_requerimiento is None or (precio > float(comp_requerimiento["price"])) or (precio == float(comp_requerimiento["price"]) and float(comp["weight_kg"]) < float(peso_requerimiento)):
                     comp_requerimiento = comp
                     peso_requerimiento = comp["weight_kg"]
-    elif filtro == "menor":
+    elif filtro == "barato":
         for i in range (largo):
             comp = lt.get_element(computadores,i)
             if comp["display_resolution"] == resolucion and comp["release_year"] != "" and año_min <= float(comp["release_year"]) <= año_max:
