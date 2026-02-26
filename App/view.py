@@ -147,46 +147,18 @@ def print_req_1(control):
 
 
 def print_req_2(control):
-    if control["computadores"] is None:
-        print("Primero carga los datos.")
-        return
+    """
+        Función que imprime la solución del Requerimiento 2 en consola
+    """
+    # TODO: Imprimir el resultado del requerimiento 2
+    pass
 
-    texto_min = input("Precio mínimo: ").strip()
-    texto_max = input("Precio máximo: ").strip()
 
-    if not texto_min.replace(".", "", 1).isdigit() or not texto_max.replace(".", "", 1).isdigit():
-        print("Precios inválidos.")
-        return
-
-    precio_min = float(texto_min)
-    precio_max = float(texto_max)
-
-    tiempo, total, prom_ram, prom_vram, prom_precio, moderno, barato, caro, filtrados = logic.req_2(control, precio_min, precio_max)
-
-    print("\n--- RESULTADO REQ 2 ---")
-    print("Tiempo (ms):", round(tiempo, 3))
-    print("Total encontrados:", total)
-
-    if total == 0:
-        print("No hay coincidencias en ese rango.")
-        return
-
-    print("\nPromedios:")
-    print("RAM:", round(prom_ram, 2) if prom_ram is not None else "N/A")
-    print("VRAM:", round(prom_vram, 2) if prom_vram is not None else "N/A")
-    print("Precio:", round(prom_precio, 2) if prom_precio is not None else "N/A")
-
-    print("\nMás moderno:")
-    print(moderno)
-
-    print("\nMás barato:")
-    print(barato)
-
-    print("\nMás caro:")
-    print(caro)
-    
 def print_req_3(control):
-    
+    """
+        Función que imprime la solución del Requerimiento 3 en consola
+    """
+    # TODO: Imprimir el resultado del requerimiento 3
     pass
 
 

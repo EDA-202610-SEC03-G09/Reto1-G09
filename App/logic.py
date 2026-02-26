@@ -260,124 +260,21 @@ def req_1(catalog, nombre_marca):
         "comp_mas_barato": comp_mas_barato
     }, tiempo
 
-def req_2(control, precio_min, precio_max):
-    inicio = get_time()
-
-    filtrados = lt.new_list()
-
-    cantidad = 0
-    suma_ram = 0.0
-    suma_vram = 0.0
-    suma_precio = 0.0
-
-    moderno = None
-    anio_moderno = None
-    precio_moderno = None
-
-    barato = None
-    precio_barato = None
-
-    caro = None
-    precio_caro = None
-
-    lista = control["computadores"]
-    n = lt.size(lista)
-
-    for i in range(n):
-        comp = lt.get_element(lista, i)
-
-        texto_precio = comp.get("price", "")
-        texto_precio = texto_precio.strip() if texto_precio is not None else ""
-
-        ok_precio = (texto_precio != "") and texto_precio.replace(".", "", 1).isdigit()
-
-        if ok_precio:
-            precio = float(texto_precio)
-
-            if precio_min <= precio <= precio_max:
-                lt.add_last(filtrados, comp)
-
-                cantidad += 1
-                suma_precio += precio
-
-                texto_ram = comp.get("ram_gb", "")
-                texto_ram = texto_ram.strip() if texto_ram is not None else ""
-                if texto_ram != "" and texto_ram.replace(".", "", 1).isdigit():
-                    suma_ram += float(texto_ram)
-
-                texto_vram = comp.get("vram_gb", "")
-                texto_vram = texto_vram.strip() if texto_vram is not None else ""
-                if texto_vram != "" and texto_vram.replace(".", "", 1).isdigit():
-                    suma_vram += float(texto_vram)
-
-                texto_anio = comp.get("release_year", "")
-                texto_anio = texto_anio.strip() if texto_anio is not None else ""
-                if texto_anio.isdigit():
-                    anio = int(texto_anio)
-
-                    if (anio_moderno is None) or (anio > anio_moderno) or (anio == anio_moderno and (precio_moderno is None or precio > precio_moderno)):
-                        anio_moderno = anio
-                        moderno = comp
-                        precio_moderno = precio
-
-                if (precio_barato is None) or (precio < precio_barato):
-                    precio_barato = precio
-                    barato = comp
-
-                if (precio_caro is None) or (precio > precio_caro):
-                    precio_caro = precio
-                    caro = comp
-
-    if cantidad == 0:
-        prom_ram = None
-        prom_vram = None
-        prom_precio = None
-    else:
-        prom_ram = suma_ram / cantidad
-        prom_vram = suma_vram / cantidad
-        prom_precio = suma_precio / cantidad
-
-    computador_moderno = None
-    computador_barato = None
-    computador_caro = None
-
-    if moderno is not None:
-        computador_moderno = {
-            "model": moderno.get("model"),
-            "brand": moderno.get("brand"),
-            "year": moderno.get("release_year"),
-            "cpu": moderno.get("cpu_model"),
-            "gpu": moderno.get("gpu_model"),
-            "price": moderno.get("price")
-        }
-
-    if barato is not None:
-        computador_barato = {
-            "model": barato.get("model"),
-            "brand": barato.get("brand"),
-            "year": barato.get("release_year"),
-            "cpu": barato.get("cpu_model"),
-            "gpu": barato.get("gpu_model"),
-            "price": barato.get("price")
-        }
-
-    if caro is not None:
-        computador_caro = {
-            "model": caro.get("model"),
-            "brand": caro.get("brand"),
-            "year": caro.get("release_year"),
-            "cpu": caro.get("cpu_model"),
-            "gpu": caro.get("gpu_model"),
-            "price": caro.get("price")
-        }
-
-    fin = get_time()
-    tiempo = delta_time(inicio, fin)
-
-    return tiempo, cantidad, prom_ram, prom_vram, prom_precio, computador_moderno, computador_barato, computador_caro, filtrados
-
-def req_3(catalog, cpu_brand, cpu_tier):
+def req_2(catalog):
+    """
+    Retorna el resultado del requerimiento 2
+    """
+    # TODO: Modificar el requerimiento 2
     pass
+
+
+def req_3(catalog):
+    """
+    Retorna el resultado del requerimiento 3
+    """
+    # TODO: Modificar el requerimiento 3
+    pass
+
 
 def req_4(catalog,cpu_brand,gpu_model):
     
@@ -476,7 +373,7 @@ def req_5(catalog,filtro,resolucion,año_min, año_max):
     computadores = catalog["computadores"]
     largo = lt.size(computadores)
     
-    if filtro == "mayor":
+    if filtro == "caro":
         for i in range (largo):
             comp = lt.get_element(computadores,i)
             if comp["display_resolution"] == resolucion and comp["release_year"] != "" and año_min <= float(comp["release_year"]) <= año_max:
@@ -505,7 +402,7 @@ def req_5(catalog,filtro,resolucion,año_min, año_max):
                 if comp_requerimiento is None or (precio > float(comp_requerimiento["price"])) or (precio == float(comp_requerimiento["price"]) and float(comp["weight_kg"]) < float(peso_requerimiento)):
                     comp_requerimiento = comp
                     peso_requerimiento = comp["weight_kg"]
-    elif filtro == "menor":
+    elif filtro == "barato":
         for i in range (largo):
             comp = lt.get_element(computadores,i)
             if comp["display_resolution"] == resolucion and comp["release_year"] != "" and año_min <= float(comp["release_year"]) <= año_max:
@@ -563,97 +460,13 @@ def req_5(catalog,filtro,resolucion,año_min, año_max):
     # TODO: Modificar el requerimiento 5
     pass
 
-def req_6(catalog, año_inicial, año_final):
-    inicio = get_time()
+def req_6(catalog):
+    """
+    Retorna el resultado del requerimiento 6
+    """
+    # TODO: Modificar el requerimiento 6
+    pass
 
-    lista_nueva = sl.new_list()
-    registros = 0 
-    os_usado = None
-    cantidad = 0 
-    os_mas_recauda = None
-    max_recaudo = 0
-
-    tamaño = lt.size(catalog["computadores"])
-    for i in range(tamaño):
-        elemento = lt.getElement(catalog["computadores"], i)
-        if elemento["release_year"] >= año_inicial and elemento["release_year"] <= año_final:
-            sl.add_last(lista_nueva, elemento)
-            registros += 1 
-        
-        
-    tamaño_nueva = sl.size(lista_nueva)
-    resultados_por_os = sl.newList()
-    for i in range (1, sl.size(lista_nueva)+1):
-        elemento = sl.get_element(lista_nueva, i)
-        os_actual = elemento["os"]
-    
-        cantidad_os = 0
-        recaudo_os = 0
-        suma_peso = 0 
-    
-        precio_min = 99999999
-        precio_max = 0 
-    
-        barato = None 
-        caro = None
-        for j in range(1, tamaño_nueva + 1):
-            elementoj = sl.get_element(lista_nueva, j)
-
-            if elementoj["os"] == os_actual:
-                cantidad_os += 1
-                precio = float(elementoj["price"])
-                
-                peso = float(elementoj["weight"])
-            
-                recaudo_os += precio
-                
-                suma_peso += peso
-            
-                if precio < precio_min:
-                    precio_min = precio
-                    barato = elementoj
-
-                if precio > precio_max:
-                    precio_max = precio
-                    caro = elementoj
-                
-        if cantidad_os > cantidad:
-            cantidad = cantidad_os
-            os_mas_usado = os_actual
-
-        if recaudo_os > max_recaudo:
-            max_recaudo = recaudo_os
-            os_mas_recauda = os_actual
-        
-        precio_promedio = recaudo_os / cantidad_os
-        peso_promedio = suma_peso / cantidad_os
-    
-        info_os = {
-            "os": os_actual,
-            "cantidad": cantidad_os,
-            "recaudo": recaudo_os,
-            "precio_promedio": precio_promedio,
-            "peso_promedio": peso_promedio,
-            "mas_caro": caro,
-            "mas_barato": barato
-            }
-
-        sl.addLast(resultados_por_os, info_os)
-    
-    final = get_time()
-    tiempo = final - inicio
-    
-    
-    info = [
-    ["Tiempo de ejecución ", round(tiempo, 2)],
-    ["registros en rango", registros],
-    ["os más usado", os_mas_usado],
-    ["Cantidad del OS más usado", cantidad],
-    ["OS con mayor recaudo", os_mas_recauda],
-    ["Recaudo máximo", (max_recaudo, 2)]
-]
-
-    return info , resultados_por_os
 
 # Funciones para medir tiempos de ejecucion
 
